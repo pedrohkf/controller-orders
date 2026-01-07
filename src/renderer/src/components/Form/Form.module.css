@@ -1,0 +1,10 @@
+.form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25rem;
+    height: 5rem;
+    margin-top: 5rem;
+    background-color: aliceblue;
+    border-radius: 10px;
+}
