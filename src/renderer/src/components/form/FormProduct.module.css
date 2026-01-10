@@ -1,0 +1,29 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 80vh;
+    width: 100%;
+}
+
+.form div{
+    display: flex;
+    flex-direction: column;
+}
+
+.form p,
+h3 {
+    color: var(--text-medium);
+    font-weight: 600;
+}
+
+.form h3 {
+    color: var(--text-black);
+    font-size: 20px;
+}
+
+.form label {
+    color: var(--text-black);
+    padding-top: 1rem;
+    font-weight: 500;
+}

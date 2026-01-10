@@ -1,5 +1,5 @@
-import { ipcMain, IpcMain } from "electron";
-import { createUser, getAllUsers} from "../services/user.service";
+import { ipcMain } from "electron";
+import { createUser, getAllUsers} from "../services/client.service";
 
 export function registerUserIpc() {
     ipcMain.handle("user:create", (_event, data) => {

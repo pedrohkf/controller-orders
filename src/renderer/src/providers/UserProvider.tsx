@@ -1,5 +1,5 @@
 import UserContext from '@renderer/context/UserContext';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type User = {
     name: string;

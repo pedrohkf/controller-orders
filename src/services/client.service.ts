@@ -6,7 +6,7 @@ type User = {
 
 export function createUser(data: User) {
     const insert = db.prepare(`
-        INSERT INTO users (name) VALUES (?)
+        INSERT INTO clients (name) VALUES (?)
         `);
 
     insert.run(data.name);
@@ -14,7 +14,7 @@ export function createUser(data: User) {
 
 export function getAllUsers() {
     const users = db.prepare(`
-        SELECT name FROM users
+        SELECT name FROM clients
         `)
 
     const result = users.all()

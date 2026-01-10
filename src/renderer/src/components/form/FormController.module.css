@@ -1,0 +1,31 @@
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 30%;
+    height: 100%;
+    padding: 2rem;
+    row-gap: 1.5rem;
+    background-color: var(--background-light);
+    border-radius: 10px;
+}
+
+.menuForm{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.menuForm button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 6rem;
+    height: 2.5rem;
+}
+
+.table{
+    width: 70%;
+    height: 100%;
+    background-color: aquamarine;
+}

@@ -1,0 +1,18 @@
+.tableWrapper{
+    background-color: var(--background-light);
+    height: 100%;
+    border-radius: 12px;
+}
+
+.table th,
+.table td {
+    text-align: center;
+    white-space: nowrap;
+    height: 2.5rem;
+}
+
+.title th {
+    font-weight: 600;
+    font-size: 13px;
+}
+

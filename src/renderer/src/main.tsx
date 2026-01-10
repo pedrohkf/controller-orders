@@ -4,11 +4,17 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import UserProvider from './providers/UserProvider'
+import OrderProvider from './providers/OrderProvider'
+import ProductProvider from './providers/ProductProvider'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <UserProvider>
-      <App />
-    </UserProvider>
+    <ProductProvider>
+      <OrderProvider>
+        <UserProvider>
+          <App />
+        </UserProvider>
+      </OrderProvider>
+    </ProductProvider>
   </StrictMode>
 )
