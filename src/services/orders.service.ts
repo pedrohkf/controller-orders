@@ -8,16 +8,18 @@ export function createOrder(data: Order) {
             reference,
             amount,
             finalPrice,
+            finalPriceBV,
             cost,
             customization,
             log,
-            discount
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            discount,
+            totalPrice,
+            totalPriceBV,
+            profitability,
+            status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         `);
-
-    console.log(data.productId)
-
-    insert.run(data.productId, data.reference, data.amount, data.finalPrice, data.cost, data.customization, data.log, data.discount);
+    insert.run(data.productId, data.reference, data.amount, data.finalPrice, data.finalPriceBV, data.cost, data.customization, data.log, data.discount, data.totalPrice, data.totalPriceBV, data.profitability, data.status);
 }
 
 export function getAllOrders() {
@@ -31,7 +33,7 @@ export function getAllOrders() {
 
 export function editOrder(data: Order) {
     const product = db.prepare(`
-        UPDATE orders SET productId = ?, reference = ?, amount = ?, finalPrice = ?, cost = ?, customization = ?, log = ?, discount = ? WHERE orderId = ?
+        UPDATE orders SET productId = ?, reference = ?, amount = ?, finalPrice = ?, finalPriceBV = ?, cost = ?, customization = ?, log = ?, discount = ?, totalPrice = ?, totalPriceBV = ?, profitability = ?, status = ? WHERE orderId = ?
     `)
 
     console.log("productId:", data.productId);
@@ -44,7 +46,6 @@ export function editOrder(data: Order) {
     console.log("discount:", data.discount);
     console.log("orderId:", data.orderId);
 
-
-    const result = product.run(data.productId, data.reference, data.amount, data.finalPrice, data.cost, data.customization, data.log, data.discount, data.orderId)
+    const result = product.run(data.productId, data.reference, data.amount, data.finalPrice, data.finalPriceBV, data.cost, data.customization, data.log, data.discount, data.totalPrice, data.totalPriceBV, data.profitability, data.status, data.orderId)
     return result;
 }
