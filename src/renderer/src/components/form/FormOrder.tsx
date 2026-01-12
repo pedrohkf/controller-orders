@@ -59,9 +59,31 @@ const FormOrder = ({ item, setItem, orderId }) => {
     }
   }
 
+  const handleClick = ((e: any) => {
+    const allowedTags = ["INPUT", "LABEL", "H3", "BUTTON", "SELECT"]
+
+
+    const tag = e.target.tagName;
+    console.log(tag)
+
+    if (!allowedTags.includes(tag)) {
+      console.log(tag)
+      setProduct("")
+      setReference("")
+      setAmount(0)
+      setPrice(0)
+      setCost(0)
+      setCustomization(0)
+      setLog(0)
+      setDiscount(0)
+      setStatus("")
+      setItem(null);
+    }
+
+
+  })
+
   useEffect(() => {
-
-
     if (item) {
       setProduct(item.productId)
       setReference(item.reference)
@@ -80,13 +102,14 @@ const FormOrder = ({ item, setItem, orderId }) => {
       setCost(0)
       setCustomization(0)
       setLog(0)
-      setDiscount(0)
+      setDiscount(0);
+      setStatus("")
       setItem(null);
     }
   }, [item]);
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
+    <form onSubmit={handleSubmit} className={styles.form} onClick={handleClick}>
       <h3>Cadastrar Pedido</h3>
       <p className={styles.titleLine}>IDENTIFICAÇÃO</p>
       <div className={styles.rowProducts} >
