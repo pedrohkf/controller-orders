@@ -1,24 +1,26 @@
 import { db } from "../db/connection";
 import Order from "../renderer/src/shared/types/order";
 
-export function createOrder(data: Order) {
+export function createOrderItem(data: Order) {
     const insert = db.prepare(`
-        INSERT INTO orders (
-            reference,
-            totalPrice,
-            totalPriceBV,
-            profitability,
-            status
-        ) VALUES (?, ?, ?, ?, ?);
+        INSERT INTO order_items (
+            orderId,
+            productId,
+            amount,
+            finalPrice,
+            finalPriceBV,
+            cost,
+            customization,
+            log,
+            discount
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
-    const result = insert.run(data.reference, data.totalPrice, data.totalPriceBV, data.profitability, data.status);
-    const orderId = result.lastInsertRowid
-    return orderId;
+    insert.run(data.orderId, data.productId, data.amount, data.finalPrice, data.finalPriceBV, data.cost, data.customization, data.log, data.discount);
 }
 
-export function getAllOrders() {
+export function getAllOrderItems() {
     const orders = db.prepare(`
-        SELECT * FROM orders
+        SELECT * FROM orders_items
         `)
 
     const result = orders.all()

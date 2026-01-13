@@ -3,8 +3,8 @@ import { createOrder, editOrder, getAllOrders} from "../services/orders.service"
 
 export function registerOrderIpc() {
     ipcMain.handle("order:create", (_event, data) => {
-        createOrder(data);
-        return { success: true };
+        const orderId = createOrder(data);
+        return orderId;
     })
 }
 

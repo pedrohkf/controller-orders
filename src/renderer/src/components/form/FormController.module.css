@@ -4,7 +4,6 @@
     align-items: stretch;
     width: 30%;
     height: 100%;
-    row-gap: 1.5rem;
     background-color: var(--background-light);
     border-radius: 10px;
 }

@@ -6,11 +6,13 @@ import icon from '../../resources/icon.png?asset'
 import { createTableClients } from '../db/tables/clients'
 import { createTableOrders } from '../db/tables/orders'
 import { createTableProducts } from '../db/tables/products'
+import { createTableOrderItem } from '../db/tables/orderItem'
 
 import { db } from '../db/connection'
 import { getAllUsersIpc, registerUserIpc } from "../ipc/user.ipc"
 import { getAllOrdersIpc, registerOrderIpc, editOrderIpc } from "../ipc/order.ipc"
 import { getAllProductsIpc, registerProductIpc, editProductIpc } from "../ipc/product.ipc"
+import { getAllOrderItemsIpc, registerOrderItemIpc, editOrderItemIpc } from "../ipc/orderItem.ipc"
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -58,6 +60,7 @@ app.whenReady().then(() => {
   createTableClients(db);
   createTableOrders(db);
   createTableProducts(db);
+  createTableOrderItem(db)
 
   registerUserIpc();
   getAllUsersIpc();
@@ -69,6 +72,10 @@ app.whenReady().then(() => {
   getAllProductsIpc()
   registerProductIpc();
   editProductIpc();
+
+  getAllOrderItemsIpc()
+  registerOrderItemIpc();
+  editOrderItemIpc();
 })
 
 app.on('window-all-closed', () => {

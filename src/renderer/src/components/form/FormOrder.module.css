@@ -1,4 +1,4 @@
-.form{
+.form {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -6,49 +6,55 @@
     padding: 2rem;
 }
 
-.form p, h3{
+.form p,
+h3 {
     color: var(--text-medium);
     font-weight: 600;
 }
 
-.form h3{
+.form h3 {
     color: var(--text-black);
     font-size: 20px;
 }
 
-.form label{
+.form label {
     color: var(--text-black);
     font-weight: 500;
 }
 
-.titleLine{
+.titleLine {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.titleLine::after{
+.titleLine::after {
     content: "";
     flex: 1;
     height: 1px;
     background-color: var(--text-medium);
 }
 
-.rowPrice{
+.rowProducts {
     display: flex;
     column-gap: 0.5rem;
 }
 
-.rowDetails{
+.rowPrice {
     display: flex;
     column-gap: 0.5rem;
 }
 
-.rowTotals{
+.rowDetails {
     display: flex;
     column-gap: 0.5rem;
 }
 
-.rowTotals input{
+.rowTotals {
+    display: flex;
+    column-gap: 0.5rem;
+}
+
+.rowTotals input {
     background-color: var(--background-medium);
 }
