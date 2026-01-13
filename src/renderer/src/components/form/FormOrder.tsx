@@ -5,17 +5,7 @@ import useProductContext from '@renderer/hook/useProduct';
 import { useEffect, useState } from 'react'
 
 const FormOrder = ({ item, setItem, orderId }) => {
-  // const [product, setProduct] = useState<string>("");
-  // const [reference, setReference] = useState<string>("");
-  // const [amount, setAmount] = useState<number>(0);
-  // const [price, setPrice] = useState<number>(0);
-  // const [cost, setCost] = useState<number>(0);
-  // const [customization, setCustomization] = useState<number>(0);
-  // const [log, setLog] = useState<number>(0);
-  // const [discount, setDiscount] = useState<number>(0);
-
   const [status, setStatus] = useState<string>("pendente");
-
   const [currentOrderId, setCurrentOrderId] = useState<number | null>(null);
 
   const [itemCount, setItemCount] = useState<number>(1);
@@ -23,47 +13,8 @@ const FormOrder = ({ item, setItem, orderId }) => {
     { product: "", amount: 1, price: 0, cost: 0, customization: 0, log: 0, discount: 0 }
   ]);
 
-
   const order = useOrderContext();
   const listProducts = useProductContext();
-
-  // const rentabilidadeInfo = 0.30;
-  // const imposto = 0.13;
-  // const over = 0.20;
-  // const bv = 0;
-  // const commision = 0;
-
-  // const finalPriceBV = (((cost + customization + log) * (1 + rentabilidadeInfo) * (1 + imposto) * (1 + over)) * (1 - (discount / 100)) * (1 + bv + commision)).toFixed(2);
-  // const totalPrice = (amount * price).toFixed(2);
-  // const totalPriceBV = (finalPriceBV * amount).toFixed(2);
-  // const rentabilidadePorcent = (((price / ((cost + customization + log) * (1 + imposto) * (1 + over))) - 1) * 100).toFixed(2);
-  // const rentabilidade = ((rentabilidadePorcent / 100) * price * amount).toFixed(2);
-
-  const handleClick = ((e: any) => {
-    const allowedTags = ["INPUT", "LABEL", "H3", "BUTTON", "SELECT"]
-    const tag = e.target.tagName;
-
-    if (!allowedTags.includes(tag)) {
-      resetsInputs()
-    }
-
-  })
-
-  useEffect(() => {
-    if (item) {
-      // setProduct(item.productId)
-      // setReference(item.reference)
-      // setAmount(item.amount)
-      // setPrice(item.finalPrice)
-      // setCost(item.cost)
-      // setCustomization(item.customization)
-      // setLog(item.log)
-      // setDiscount(item.discount)
-      // setStatus(item.status)
-    } else {
-      resetsInputs()
-    }
-  }, [item]);
 
   const addProduct = (() => {
     setItemCount(itemCount + 1)
@@ -73,7 +24,6 @@ const FormOrder = ({ item, setItem, orderId }) => {
     if (itemCount > 1) {
       setItemCount(itemCount - 1);
     }
-
   })
 
   useEffect(() => {
@@ -102,7 +52,6 @@ const FormOrder = ({ item, setItem, orderId }) => {
     e.preventDefault();
 
     if (!currentOrderId) {
-      console.log("ID FALTANDO");
       return
     };
 
@@ -111,7 +60,7 @@ const FormOrder = ({ item, setItem, orderId }) => {
     await Promise.all(
       orderItems.map((orderItem) =>
         order.createOrderItem(
-          currentOrderId,
+          Number(currentOrderId),
           orderItem.product,
           orderItem.amount,
           orderItem.price,
@@ -123,7 +72,7 @@ const FormOrder = ({ item, setItem, orderId }) => {
         )
       )
     )
-    resetsInputs();
+    resetOrderItems();
 
     if (item) {
       // order.editOrder(product, reference, amount, price, finalPriceBV, cost, customization, log, discount, totalPrice, totalPriceBV, rentabilidade, status, orderId);
@@ -137,21 +86,16 @@ const FormOrder = ({ item, setItem, orderId }) => {
 
 
 
-  function resetsInputs() {
-    // setProduct("")
-    // setReference("")
-    // setAmount(0)
-    // setPrice(0)
-    // setCost(0)
-    // setCustomization(0)
-    // setLog(0)
-    // setDiscount(0)
-    // setStatus("");
+  function resetOrderItems() {
+    setOrderItems([
+      { product: "", amount: 1, price: 0, cost: 0, customization: 0, log: 0, discount: 0 }
+    ]); 
+    setItemCount(1);
     setItem(null);
   }
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form} onClick={handleClick}>
+    <form onSubmit={handleSubmit} className={styles.form}>
       <h3>Cadastrar Pedido {currentOrderId}</h3>
       <p className={styles.titleLine}>{itemCount}</p>
       {orderItems.map((item, index) =>

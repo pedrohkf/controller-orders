@@ -2,8 +2,8 @@ export function createTableOrderItem(db) {
     db.exec(`
         CREATE TABLE IF NOT EXISTS order_items(
             orderItemId INTEGER PRIMARY KEY,
-            orderId TEXT NOT NULL,
-            productId TEXT NOT NULL,
+            orderId INTEGER NOT NULL,
+            productId INTEGER NOT NULL,
             amount INTEGER NOT NULL,
             finalPrice INTEGER NOT NULL,
             finalPriceBV INTEGER DEFAULT 0,

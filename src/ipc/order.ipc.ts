@@ -1,14 +1,15 @@
 import { ipcMain } from "electron";
-import { createOrder, editOrder, getAllOrders} from "../services/orders.service";
+import { createOrder, editOrder, getAllOrders } from "../services/orders.service";
 
 export function registerOrderIpc() {
-    ipcMain.handle("order:create", (_event, data) => {
-        const orderId = createOrder(data);
+    ipcMain.handle("order:create", async (_event, data) => {
+        const orderId = await createOrder(data);
         return orderId;
-    })
+    });
+
 }
 
-export function getAllOrdersIpc(){
+export function getAllOrdersIpc() {
     ipcMain.handle("orders:list", () => {
         const orders = getAllOrders();
         return orders;

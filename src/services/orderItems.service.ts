@@ -1,7 +1,8 @@
 import { db } from "../db/connection";
 import Order from "../renderer/src/shared/types/order";
+import OrderItem from "../renderer/src/shared/types/orderItem";
 
-export function createOrderItem(data: Order) {
+export function createOrderItem(data: OrderItem) {
     const insert = db.prepare(`
         INSERT INTO order_items (
             orderId,
@@ -19,29 +20,19 @@ export function createOrderItem(data: Order) {
 }
 
 export function getAllOrderItems() {
-    const orders = db.prepare(`
-        SELECT * FROM orders_items
+    const orderItems = db.prepare(`
+        SELECT * FROM order_items
         `)
 
-    const result = orders.all()
+    const result = orderItems.all()
     return result;
 }
 
-export function editOrder(data: Order) {
-    const product = db.prepare(`
-        UPDATE orders SET productId = ?, reference = ?, amount = ?, finalPrice = ?, finalPriceBV = ?, cost = ?, customization = ?, log = ?, discount = ?, totalPrice = ?, totalPriceBV = ?, profitability = ?, status = ? WHERE orderId = ?
+export function editOrderItem(data: OrderItem) {
+    const orderItem = db.prepare(`
+        UPDATE order_items SET productId = ?, amount = ?, finalPrice = ?, finalPriceBV = ?, cost = ?, customization = ?, log = ?, discount = ?, WHERE orderItemId = ?
     `)
 
-    console.log("productId:", data.productId);
-    console.log("reference:", data.reference);
-    console.log("amount:", data.amount);
-    console.log("finalPrice:", data.finalPrice);
-    console.log("cost:", data.cost);
-    console.log("customization:", data.customization);
-    console.log("log:", data.log);
-    console.log("discount:", data.discount);
-    console.log("orderId:", data.orderId);
-
-    const result = product.run(data.productId, data.reference, data.amount, data.finalPrice, data.finalPriceBV, data.cost, data.customization, data.log, data.discount, data.totalPrice, data.totalPriceBV, data.profitability, data.status, data.orderId)
+    const result = orderItem.run(data.productId, data.amount, data.finalPrice, data.finalPriceBV, data.cost, data.customization, data.log, data.discount, data.orderItemId)
     return result;
 }

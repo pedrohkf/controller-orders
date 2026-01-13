@@ -6,71 +6,50 @@ import styles from "./TableOrder.module.css"
 import { useMemo } from "react";
 
 const TableOrder = ({ onSelect, onSelectId }) => {
-    const orders = useOrder();
+    const { orders, orderItems } = useOrder();
     const products = useProduct();
 
     const productMap = useMemo(() => {
-        const map: Record<string, any> = {};
-
-        products.products.forEach((product) => {
+        const map = {};
+        products.products.forEach(product => {
             map[product.productId] = product;
         });
-
         return map;
     }, [products.products]);
 
-
     return (
-        <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-                <thead>
-                    <tr className={styles.title}>
-                        <th>Produto</th>
-                        <th>Referência</th>
-                        <th>Quantidade</th>
-                        <th>Preço Final</th>
-                        <th>Preço Final BV</th>
-                        <th>Custo</th>
-                        <th>Customização</th>
-                        <th>Log</th>
-                        <th>Desconto</th>
-                        <th>Preço Total</th>
-                        <th>Preço Total+BV</th>
-                        <th>Rentabilidade</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {orders.orders.map(order =>
-                        <tr key={order.orderId}
-                            onClick={() => {
-                                onSelect(order),
-                                    onSelectId(order.orderId)
-                            }}>
+        <div className={styles.container}>
+            {orders.map(order => {
+                const itemsFromOrder = orderItems.filter(
+                    item => Number(item.orderId) === Number(order.orderId)
 
-                            <td>
-                                {productMap[order.productId]?.name ?? "-"}
-                            </td>
+                );
 
+                return (
+                    <div
+                        key={order.orderId}
+                        className={styles.card}
+                        onClick={() => {
+                            onSelect(order);
+                            onSelectId(order.orderId);
+                        }}
+                    >
+                        <p>Referência: {order.reference}</p>
 
-                            <td>{order.reference}</td>
-                            <td>{order.amount}</td>
-                            <td>{order.finalPrice}</td>
-                            <td>{order.finalPriceBV}</td>
-                            <td>{order.cost}</td>
-                            <td>{order.customization}</td>
-                            <td>{order.log}</td>
-                            <td>{order.discount}</td>
-                            <td>{order.totalPrice}</td>
-                            <td>{order.totalPriceBV}</td>
-                            <td>{order.profitability}</td>
-                            <td>{order.status}</td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+                        {itemsFromOrder.map(item => (
+                            <div key={item.orderItemId}>
+                                <p>Produto: {productMap[item.productId]?.name ?? "-"}</p>
+                                <p>Qtd: {item.amount}</p>
+                                <p>Custo: {item.cost}</p>
+                            </div>
+                        ))}
+
+                        <p>Total: {order.totalPrice}</p>
+                    </div>
+                );
+            })}
         </div>
-    )
-}
+    );
+};
 
-export default TableOrder
+export default TableOrder;

@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { createOrderItem, editOrder, getAllOrderItems} from "../services/orderItems.service";
+import { createOrderItem, editOrderItem, getAllOrderItems} from "../services/orderItems.service";
 
 export function registerOrderItemIpc() {
     ipcMain.handle("orderItem:create", (_event, data) => {
@@ -17,7 +17,7 @@ export function getAllOrderItemsIpc(){
 
 export function editOrderItemIpc() {
     ipcMain.handle("orderItem:edit", (_event, data) => {
-        editOrder(data);
+        editOrderItem(data);
         return { seccess: true };
     })
 }

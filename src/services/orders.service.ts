@@ -27,19 +27,9 @@ export function getAllOrders() {
 
 export function editOrder(data: Order) {
     const product = db.prepare(`
-        UPDATE orders SET productId = ?, reference = ?, amount = ?, finalPrice = ?, finalPriceBV = ?, cost = ?, customization = ?, log = ?, discount = ?, totalPrice = ?, totalPriceBV = ?, profitability = ?, status = ? WHERE orderId = ?
+        UPDATE orders SET reference = ?, totalPrice = ?, totalPriceBV = ?, profitability = ?, status = ? WHERE orderId = ?
     `)
 
-    console.log("productId:", data.productId);
-    console.log("reference:", data.reference);
-    console.log("amount:", data.amount);
-    console.log("finalPrice:", data.finalPrice);
-    console.log("cost:", data.cost);
-    console.log("customization:", data.customization);
-    console.log("log:", data.log);
-    console.log("discount:", data.discount);
-    console.log("orderId:", data.orderId);
-
-    const result = product.run(data.productId, data.reference, data.amount, data.finalPrice, data.finalPriceBV, data.cost, data.customization, data.log, data.discount, data.totalPrice, data.totalPriceBV, data.profitability, data.status, data.orderId)
+    const result = product.run(data.reference, data.totalPrice, data.totalPriceBV, data.profitability, data.status, data.orderId)
     return result;
 }

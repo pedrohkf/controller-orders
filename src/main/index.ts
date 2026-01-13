@@ -3,13 +3,11 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
-import { createTableClients } from '../db/tables/clients'
 import { createTableOrders } from '../db/tables/orders'
 import { createTableProducts } from '../db/tables/products'
 import { createTableOrderItem } from '../db/tables/orderItem'
 
 import { db } from '../db/connection'
-import { getAllUsersIpc, registerUserIpc } from "../ipc/user.ipc"
 import { getAllOrdersIpc, registerOrderIpc, editOrderIpc } from "../ipc/order.ipc"
 import { getAllProductsIpc, registerProductIpc, editProductIpc } from "../ipc/product.ipc"
 import { getAllOrderItemsIpc, registerOrderItemIpc, editOrderItemIpc } from "../ipc/orderItem.ipc"
@@ -57,13 +55,9 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  createTableClients(db);
   createTableOrders(db);
   createTableProducts(db);
   createTableOrderItem(db)
-
-  registerUserIpc();
-  getAllUsersIpc();
 
   getAllOrdersIpc();
   registerOrderIpc();
