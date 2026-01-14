@@ -14,10 +14,20 @@ const emptyOrderItem = () => ({
   discount: 0
 });
 
-const FormOrder = ({ item, setItem }) => {
+const FormOrder = ({ item, setItem, selectedOrderId }) => {
+  const [reference, setReference] = useState<string>("");
   const [status, setStatus] = useState<string>("pendente");
   const [currentOrderId, setCurrentOrderId] = useState<number | null>(null);
   const [orderItems, setOrderItems] = useState([emptyOrderItem()]);
+
+  const [totals, setTotals] = useState({
+    totalPrice: 0,
+    totalPriceBV: 0,
+    finalPriceBV: 0,
+    rentabilidadePorcent: 0,
+    rentabilidade: 0
+  });
+
 
   const order = useOrderContext();
 
@@ -38,11 +48,55 @@ const FormOrder = ({ item, setItem }) => {
 
   useEffect(() => {
     const initOrder = async () => {
-      const newOrderId = await order.createOrder("TEMP", 0, 0, 0, status);
+      const newOrderId = await order.createOrder(reference, 0, 0, 0, status);
       setCurrentOrderId(newOrderId);
     }
     initOrder();
   }, []);
+
+  useEffect(() => {
+    const getOrder = await order.loadOrders();
+  })
+
+
+  useEffect(() => {
+    const rentabilidadeInfo = 0.30;
+    const imposto = 0.13;
+    const over = 0.20;
+    const bv = 0;
+    const commision = 0;
+
+    let totalCost = 0;
+    let totalCustomization = 0;
+    let totalLog = 0;
+    let totalDiscount = 0;
+    let totalAmount = 0;
+    let totalPriceBase = 0;
+
+    orderItems.forEach(item => {
+      totalCost += item.amount * item.cost;
+      totalCustomization += item.amount * item.customization;
+      totalLog += item.amount * item.log;
+      totalDiscount += item.amount * item.discount;
+      totalAmount += item.amount;
+      totalPriceBase += item.amount * item.price;
+    });
+
+    const finalPriceBV = (((totalCost + totalCustomization + totalLog) * (1 + rentabilidadeInfo) * (1 + imposto) * (1 + over)) * (1 - (totalDiscount / 100)) * (1 + bv + commision));
+    const totalPrice = totalPriceBase;
+    const totalPriceBV = finalPriceBV * totalAmount;
+    const rentabilidadePorcent = ((totalPriceBase / ((totalCost + totalCustomization + totalLog) * (1 + imposto) * (1 + over)) - 1) * 100);
+    const rentabilidade = (rentabilidadePorcent / 100) * totalPriceBase;
+
+    setTotals({
+      totalPrice,
+      totalPriceBV,
+      finalPriceBV,
+      rentabilidadePorcent,
+      rentabilidade
+    });
+
+  }, [orderItems]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -64,6 +118,15 @@ const FormOrder = ({ item, setItem }) => {
       )
     )
 
+    order.editOrder(
+      currentOrderId,
+      reference,
+      totals.totalPrice,
+      totals.totalPriceBV,
+      totals.rentabilidade,
+      status
+    );
+
     resetOrderItems();
 
     if (item) {
@@ -71,9 +134,8 @@ const FormOrder = ({ item, setItem }) => {
       // resetsInputs()
       // setItem(null);
 
-    } else {
-
     }
+
   }
 
   return (
@@ -95,17 +157,18 @@ const FormOrder = ({ item, setItem }) => {
       <button type="button" onClick={addProduct}>Adicionar Produto</button>
 
       <p className={styles.titleLine}>TOTAIS E RENTABILIDADE</p>
-      {/* <div className={styles.rowTotals}>
-        <label htmlFor="ref">Referência<input type="" placeholder="Referência" value={reference} onChange={(e) => setReference(e.target.value)} /></label>
-        <label htmlFor="precoTotal">Preço Final BV<input type="number" disabled placeholder="Preço Total" value={finalPriceBV} /></label>
-        <label htmlFor="precoTotalSBV">Preço Total S/BV<input type="number" disabled placeholder="Preço Total S/BV" value={totalPrice} /></label>
-        <label htmlFor="precoTotalBV">Preço Total S/BV<input type="number" disabled placeholder="Preço Total BV" value={totalPriceBV} /></label>
+      <label htmlFor="ref">Referência<input type="" placeholder="Referência" value={reference} onChange={(e) => setReference(e.target.value)} /></label>
+      <div className={styles.rowTotals}>
+        <label htmlFor="totalPrice"><input type="number" disabled value={totals.totalPrice.toFixed(2)} /></label>
+        <input type="number" disabled value={totals.totalPriceBV.toFixed(2)} />
+
       </div>
 
       <div className={styles.rowTotals}>
-        <label htmlFor="rentabilidade%">Rentabilidade %<input type="text" disabled placeholder="Rentabilidade %" value={rentabilidadePorcent + " %"} /></label>
-        <label htmlFor="rentabilidade">Rentabilidade<input type="number" disabled placeholder="Rentabilidade" value={rentabilidade} /></label>
-      </div> */}
+        <input type="text" disabled value={totals.rentabilidadePorcent.toFixed(2) + " %"} />
+        <input type="number" disabled value={totals.rentabilidade.toFixed(2)} />
+        <input type="number" disabled value={totals.finalPriceBV.toFixed(2)} />
+      </div>
 
       <p className={styles.titleLine}>STATUS</p>
       <div className={styles.rowStatus}>

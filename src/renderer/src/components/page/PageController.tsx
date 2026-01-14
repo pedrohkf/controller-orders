@@ -27,7 +27,7 @@ const PageController = () => {
           productId={selectedProductId}
           selectedOrder={selectedOrder}
           setSelectedOrder={setSelectedOrder}
-          orderId={selectedOrderId}
+          selectedOrderId={selectedOrderId}
         />
         <div className={styles.tables}>
           {activeForm == "order" && <TableOrder onSelect={setSelectedOrder} onSelectId={setSelectedOrderId} />}

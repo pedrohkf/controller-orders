@@ -13,6 +13,11 @@ const OrderProvider = ({ children }) => {
         setOders(orders ?? [])
     }
 
+    const loadSpecificOrder = async () => {
+        const order = await window.electron.ipcRenderer.invoke("order:list");
+        setOders(order ?? [])
+    }
+
     const createOrder = async (reference: string, totalPrice: number, totalPriceBV: number, profitability: number, status: string) => {
         const orderId = await window.electron.ipcRenderer.invoke("order:create", {
             reference,
@@ -26,22 +31,14 @@ const OrderProvider = ({ children }) => {
         return Number(orderId);
     }
 
-    const editOrder = async (productId: number, reference: string, amount: number, finalPrice: number, finalPriceBV: number, cost: number, customization: string, log: string, discount: number, totalPrice: number, totalPriceBV: number, profitability: number, status: string, orderId: number) => {
+    const editOrder = async (orderId: number, reference: string, totalPrice: number, totalPriceBV: number, profitability: number, status: string) => {
         await window.electron.ipcRenderer.invoke("order:edit", {
-            productId,
+            orderId,
             reference,
-            amount,
-            finalPrice,
-            finalPriceBV,
-            cost,
-            customization,
-            log,
-            discount,
             totalPrice,
             totalPriceBV,
             profitability,
             status,
-            orderId,
         })
 
         loadOrders();
@@ -89,7 +86,7 @@ const OrderProvider = ({ children }) => {
         loadOrderItems();
     }, [])
 
-    const value = { orders, orderItems, createOrder, createOrderItem, editOrderItem, editOrder };
+    const value = { orders, orderItems, createOrder, createOrderItem, editOrderItem, editOrder, loadSpecificOrder };
 
     return (
         <OrderContext.Provider value={value}>

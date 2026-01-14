@@ -25,6 +25,15 @@ export function getAllOrders() {
     return result;
 }
 
+export function getOrder(data: Order) {
+    const order = db.prepare(`
+        SELECT reference, totalPrice, totalPriceBV, profitability, status FROM orders WHERE orderId = ?
+        `)
+
+    const result = order.run(data.orderId);
+    return result;
+}
+
 export function editOrder(data: Order) {
     const product = db.prepare(`
         UPDATE orders SET reference = ?, totalPrice = ?, totalPriceBV = ?, profitability = ?, status = ? WHERE orderId = ?
