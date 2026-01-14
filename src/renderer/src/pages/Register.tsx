@@ -1,4 +1,4 @@
-import PageController from '@renderer/components/menu/PageController'
+import PageController from '@renderer/components/page/PageController'
 
 import  styles from "./Register.module.css"
 

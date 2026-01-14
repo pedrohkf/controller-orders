@@ -1,0 +1,22 @@
+.productItem{
+    padding: 0.8rem;
+    background-color: var(--background-light);
+    border-radius: 8px;
+}
+
+.productItem button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+}
+
+.rowProducts {
+    display: flex;
+    column-gap: 0.5rem;
+}
+
+.rowDetails {
+    display: flex;
+    column-gap: 0.5rem;
+}

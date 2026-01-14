@@ -1,61 +1,52 @@
 import styles from "./FormOrder.module.css"
 
 import useOrderContext from '@renderer/hook/useOrders';
-import useProductContext from '@renderer/hook/useProduct';
 import { useEffect, useState } from 'react'
+import ProductFieldset from "./FieldSet/ProductFieldset";
 
-const FormOrder = ({ item, setItem, orderId }) => {
+const emptyOrderItem = () => ({
+  product: "",
+  amount: 1,
+  price: 0,
+  cost: 0,
+  customization: 0,
+  log: 0,
+  discount: 0
+});
+
+const FormOrder = ({ item, setItem }) => {
   const [status, setStatus] = useState<string>("pendente");
   const [currentOrderId, setCurrentOrderId] = useState<number | null>(null);
-
-  const [itemCount, setItemCount] = useState<number>(1);
-  const [orderItems, setOrderItems] = useState([
-    { product: "", amount: 1, price: 0, cost: 0, customization: 0, log: 0, discount: 0 }
-  ]);
+  const [orderItems, setOrderItems] = useState([emptyOrderItem()]);
 
   const order = useOrderContext();
-  const listProducts = useProductContext();
 
-  const addProduct = (() => {
-    setItemCount(itemCount + 1)
-  })
-
-  const removeProduct = (() => {
-    if (itemCount > 1) {
-      setItemCount(itemCount - 1);
-    }
-  })
-
-  useEffect(() => {
+  const addProduct = () => setOrderItems(prev => [...prev, emptyOrderItem()]);
+  const updateOrderItem = (index: number, key: string, value: any) => {
     setOrderItems(prev => {
       const newItems = [...prev];
-      while (newItems.length < itemCount) {
-        newItems.push({ product: "", amount: 1, price: 0, cost: 0, customization: 0, log: 0, discount: 0 });
-      }
-      while (newItems.length > itemCount) {
-        newItems.pop();
-      }
+      newItems[index][key] = value;
       return newItems;
     });
-  }, [itemCount]);
+  };
+  const removeProduct = (index: number) => setOrderItems(prev => prev.filter((_, i) => i !== index));
+
+  function resetOrderItems() {
+    setOrderItems([emptyOrderItem()]);
+    setItem(null);
+  }
 
   useEffect(() => {
-    async function initOrder() {
+    const initOrder = async () => {
       const newOrderId = await order.createOrder("TEMP", 0, 0, 0, status);
       setCurrentOrderId(newOrderId);
     }
-
     initOrder();
   }, []);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    if (!currentOrderId) {
-      return
-    };
-
-    console.log(currentOrderId)
+    if (!currentOrderId) return;
 
     await Promise.all(
       orderItems.map((orderItem) =>
@@ -72,6 +63,7 @@ const FormOrder = ({ item, setItem, orderId }) => {
         )
       )
     )
+
     resetOrderItems();
 
     if (item) {
@@ -84,98 +76,23 @@ const FormOrder = ({ item, setItem, orderId }) => {
     }
   }
 
-
-
-  function resetOrderItems() {
-    setOrderItems([
-      { product: "", amount: 1, price: 0, cost: 0, customization: 0, log: 0, discount: 0 }
-    ]); 
-    setItemCount(1);
-    setItem(null);
-  }
-
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h3>Cadastrar Pedido {currentOrderId}</h3>
-      <p className={styles.titleLine}>{itemCount}</p>
-      {orderItems.map((item, index) =>
-        <div className={styles.productItem}>
-          <div className={styles.rowProducts}>
-            <label htmlFor="produtos">
-              Produtos
-              <select value={item.product} onChange={(e) => {
-                const newItems = [...orderItems];
-                newItems[index].product = e.target.value;
-                setOrderItems(newItems);
-              }}>
-                <option value="">Selecione um produto</option>
-                {listProducts.products.map((prod) => (
-                  <option key={prod.productId} value={prod.productId}>
-                    {prod.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label htmlFor="quantidade">
-              Quantidade
-              <input type="number" placeholder="Quantidade" value={item.amount} onChange={(e) => {
-                const newItems = [...orderItems];
-                newItems[index].amount = Number(e.target.value);
-                setOrderItems(newItems);
-              }} />
-            </label>
-            <label htmlFor="preco">
-              Preço
-              <input type="number" placeholder="Preço" value={item.price}
-                onChange={(e) => {
-                  const newItems = [...orderItems];
-                  newItems[index].price = Number(e.target.value);
-                  setOrderItems(newItems);
-                }}
-              />
-            </label>
-            <label htmlFor="">
-              <button type="button" onClick={removeProduct}>Excluir</button>
-            </label>
-          </div>
-          <div className={styles.rowPrice}>
-          </div>
-          <div className={styles.rowDetails}>
-            <label htmlFor="custo">Custo <input type="number" placeholder="Custo" value={item.cost} onChange={(e) => {
-              const newItems = [...orderItems];
-              newItems[index].cost = Number(e.target.value);
-              setOrderItems(newItems);
-            }} /></label>
+      <h2>Cadastrar Pedido</h2>
 
-            <label htmlFor="cutomização">Personaização <input type="number" placeholder="Valor customização" value={item.customization} onChange={(e) => {
-              const newItems = [...orderItems];
-              newItems[index].customization = Number(e.target.value);
-              setOrderItems(newItems);
-            }} /></label>
+      <p className={styles.titleLine}>Produtos</p>
 
-            <label htmlFor="log">Log<input type="string" placeholder="Log" value={item.log} onChange={(e) => {
-              const newItems = [...orderItems];
-              newItems[index].log = Number(e.target.value);
-              setOrderItems(newItems);
-            }} /></label>
+      <div className={styles.products}>
+        {orderItems.map((item, index) =>
+          <ProductFieldset
+            item={item}
+            index={index}
+            updateOrderItem={updateOrderItem}
+            removeProduct={() => removeProduct(index)} />
+        )}
+      </div>
 
-            <label htmlFor="desconto">Desconto<input type="number" placeholder="Desconto" value={item.discount} onChange={(e) => {
-              const newItems = [...orderItems];
-              newItems[index].discount = Number(e.target.value);
-              setOrderItems(newItems);
-            }} /></label>
-
-          </div>
-          <div className={styles.rowDiscount}>
-          </div>
-        </div>
-      )}
       <button type="button" onClick={addProduct}>Adicionar Produto</button>
-
-
-      {/* <div className={styles.rowRef}>
-        <label htmlFor="ref">Referência<input type="" placeholder="Referência" value={reference} onChange={(e) => setReference(e.target.value)} /></label>
-      </div> */}
 
       <p className={styles.titleLine}>TOTAIS E RENTABILIDADE</p>
       {/* <div className={styles.rowTotals}>

@@ -16,7 +16,7 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
-    show: false,
+    show: true,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -24,6 +24,7 @@ function createWindow(): void {
       sandbox: false
     }
   })
+  mainWindow.maximize()
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()

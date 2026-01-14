@@ -1,23 +1,36 @@
 .form {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     height: 85vh;
     padding: 2rem;
+    row-gap: 0.8rem;
 }
 
+.products{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    height: 68%;
+    overflow-y: auto;
+    background-color: var(--background-medium);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+
 .form p,
-h3 {
+h2 {
     color: var(--text-medium);
+    stroke: var(--text-medium);
     font-weight: 600;
 }
 
-.form h3 {
+.form h2 {
     color: var(--text-black);
-    font-size: 20px;
+    font-size: 23px;
 }
 
-.form label {
+.form label, legend {
     color: var(--text-black);
     font-weight: 500;
 }
@@ -35,17 +48,9 @@ h3 {
     background-color: var(--text-medium);
 }
 
-.rowProducts {
-    display: flex;
-    column-gap: 0.5rem;
-}
+
 
 .rowPrice {
-    display: flex;
-    column-gap: 0.5rem;
-}
-
-.rowDetails {
     display: flex;
     column-gap: 0.5rem;
 }

@@ -1,0 +1,17 @@
+.container{
+    display: flex;
+    flex-direction: column;
+}
+
+.content{
+    width: 100%;
+    height: calc(100vh - 3rem);
+    display: flex;
+    padding: 2rem;
+    column-gap: 1.5rem;
+    background-color: aliceblue;
+}
+
+.tables{
+    width: 70%;
+}

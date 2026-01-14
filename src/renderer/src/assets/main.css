@@ -21,6 +21,25 @@ body {}
 
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
 p {
   color: white;
 }
@@ -38,6 +57,11 @@ select {
   border-radius: 5px;
   padding: 0.5rem;
   border: 1px solid var(--text-medium);
+}
+
+legend {
+  color: var(--text-medium);
+  stroke: var(--text-medium);
 }
 
 button {
