@@ -6,6 +6,8 @@ import useProductContext from "@renderer/hook/useProduct";
 const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
     const listProducts = useProductContext();
 
+    const products = listProducts?.products || [];
+
 
     return (
         <fieldset className={styles.productItem}>
@@ -14,10 +16,15 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
             <div className={styles.rowProducts}>
                 <label>
                     Produto
-                    <select value={item.product} onChange={e => updateOrderItem(index, "product", e.target.value)}>
+                    <select
+                        value={item.productId || ""}
+                        onChange={e => updateOrderItem(index, "productId", Number(e.target.value))}
+                    >
                         <option value="">Selecione um produto</option>
-                        {listProducts.products.map(prod => (
-                            <option key={prod.productId} value={prod.productId}>{prod.name}</option>
+                        {products.map(prod => (
+                            <option key={prod.productId} value={prod.productId}>
+                                {prod.name}
+                            </option>
                         ))}
                     </select>
                 </label>
@@ -29,7 +36,7 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
 
                 <label>
                     Preço
-                    <input type="number" value={item.price} onChange={e => updateOrderItem(index, "price", Number(e.target.value))} />
+                    <input type="number" value={item.finalPrice} onChange={e => updateOrderItem(index, "finalPrice", Number(e.target.value))} />
                 </label>
 
                 <button type="button" onClick={() => removeProduct(index)}><Trash /></button>

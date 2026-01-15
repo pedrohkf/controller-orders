@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Form } from "../form/FormController";
 
 import styles from "./PageController.module.css"
-import TableOrder from "../table/TableOrder";
 import TableProduct from "../table/TableProduct";
 import Menu from "../menu/Menu";
+import OrderList from "../table/Order/OrderList";
 
 type ActiveForm = "orderPendidng" | "product" | "order";
 
@@ -14,7 +14,7 @@ const PageController = () => {
   const [selectedProductId, setSelectedProductId] = useState(null);
 
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<number>();
 
   return (
     <div className={styles.container}>
@@ -25,12 +25,11 @@ const PageController = () => {
           selectedProduct={selectedProduct}
           setSelectedProduct={setSelectedProduct}
           productId={selectedProductId}
-          selectedOrder={selectedOrder}
-          setSelectedOrder={setSelectedOrder}
+          setSelectedOrderId={setSelectedOrderId}
           selectedOrderId={selectedOrderId}
         />
         <div className={styles.tables}>
-          {activeForm == "order" && <TableOrder onSelect={setSelectedOrder} onSelectId={setSelectedOrderId} />}
+          {activeForm == "order" && <OrderList onSelectId={setSelectedOrderId} />}
           {activeForm == "product" && <TableProduct onSelect={setSelectedProduct} onSelectId={setSelectedProductId} />}
         </div>
             </div>

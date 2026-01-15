@@ -5,6 +5,9 @@
     border-radius: 12px;
     row-gap: 2rem;
     column-gap: 1rem;
+    overflow-y: auto;
+    height: 89vh;
+    padding: 2rem;
 }
 
 .card{
@@ -14,6 +17,7 @@
     background-color: antiquewhite;
     row-gap: 0.5rem;
     column-gap: 0.5rem;
+    padding: 1rem;
 }
 
 .card p{

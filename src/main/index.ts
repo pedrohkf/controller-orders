@@ -8,9 +8,9 @@ import { createTableProducts } from '../db/tables/products'
 import { createTableOrderItem } from '../db/tables/orderItem'
 
 import { db } from '../db/connection'
-import { getAllOrdersIpc, registerOrderIpc, editOrderIpc } from "../ipc/order.ipc"
+import { registerOrderIpc, getOrderIpc, editOrderIpc } from "../ipc/order.ipc"
 import { getAllProductsIpc, registerProductIpc, editProductIpc } from "../ipc/product.ipc"
-import { getAllOrderItemsIpc, registerOrderItemIpc, editOrderItemIpc } from "../ipc/orderItem.ipc"
+import { registerOrderItemIpc, editOrderItemIpc } from "../ipc/orderItem.ipc"
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -60,7 +60,7 @@ app.whenReady().then(() => {
   createTableProducts(db);
   createTableOrderItem(db)
 
-  getAllOrdersIpc();
+  getOrderIpc();
   registerOrderIpc();
   editOrderIpc();
 
@@ -68,7 +68,6 @@ app.whenReady().then(() => {
   registerProductIpc();
   editProductIpc();
 
-  getAllOrderItemsIpc()
   registerOrderItemIpc();
   editOrderItemIpc();
 })

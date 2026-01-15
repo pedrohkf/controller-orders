@@ -1,5 +1,4 @@
 import { db } from "../db/connection";
-import Order from "../renderer/src/shared/types/order";
 import OrderItem from "../renderer/src/shared/types/orderItem";
 
 export function createOrderItem(data: OrderItem) {
@@ -19,18 +18,31 @@ export function createOrderItem(data: OrderItem) {
     insert.run(data.orderId, data.productId, data.amount, data.finalPrice, data.finalPriceBV, data.cost, data.customization, data.log, data.discount);
 }
 
-export function getAllOrderItems() {
-    const orderItems = db.prepare(`
-        SELECT * FROM order_items
+export function getOrderItemsByOrderId(orderId: number): OrderItem[] {
+    const stmt = db.prepare(`
+        SELECT 
+        order_item.orderItemId
+            order_items.amount, 
+            order_items.finalPrice, 
+            order_items.finalPriceBV, 
+            order_items.cost, 
+            order_items.customization, 
+            order_items.log, 
+            order_items.discount,
+            products.name AS productName
+            FROM order_items 
+            LEFT JOIN products 
+            ON order_items.productId = products.productId
+            WHERE order_items.orderId = ?
         `)
 
-    const result = orderItems.all()
-    return result;
+    const result = stmt.all(orderId) as OrderItem[]
+    return result || [];
 }
 
 export function editOrderItem(data: OrderItem) {
     const orderItem = db.prepare(`
-        UPDATE order_items SET productId = ?, amount = ?, finalPrice = ?, finalPriceBV = ?, cost = ?, customization = ?, log = ?, discount = ?, WHERE orderItemId = ?
+        UPDATE order_items SET productId = ?, amount = ?, finalPrice = ?, finalPriceBV = ?, cost = ?, customization = ?, log = ?, discount = ? WHERE orderItemId = ?
     `)
 
     const result = orderItem.run(data.productId, data.amount, data.finalPrice, data.finalPriceBV, data.cost, data.customization, data.log, data.discount, data.orderItemId)

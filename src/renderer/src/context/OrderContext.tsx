@@ -2,29 +2,22 @@ import React from 'react'
 import Order from '@renderer/shared/types/order';
 import OrderItem from '@renderer/shared/types/orderItem';
 
+type PaginationInfo = {
+    totalPages: number;
+    currentPage: number;
+};
+
 type OrderContextType = {
     orders: Order[];
-    orderItems: OrderItem[];
+    orderItems: Record<number, OrderItem[]>;
+    pagination: PaginationInfo;
 
-    createOrder: (
-        reference: string,
-        totalPrice: number,
-        totalPriceBV: number,
-        profitability: number,
-        status: string
+    loadOrders: (page?: number) => Promise<void>;
+
+    saveOrder: (
+        payload: { orderId: number, reference: string, status: string, items: any[] }
     ) => Promise<number>;
 
-    createOrderItem: (
-        orderId: number,
-        productId: string,
-        amount: number,
-        finalPrice: number,
-        finalPriceBV: number,
-        cost: number,
-        customization: string,
-        log: string,
-        discount: number
-    ) => Promise<void>;
 
     editOrder: (
         orderId: number,
@@ -33,18 +26,6 @@ type OrderContextType = {
         totalPriceBV: number,
         profitability: number,
         status: string
-    ) => Promise<void>;
-
-    editOrderItem: (
-        orderItemId: number,
-        productId: number,
-        amount: number,
-        finalPrice: number,
-        finalPriceBV: number,
-        cost: number,
-        customization: string,
-        log: string,
-        discount: number
     ) => Promise<void>;
 };
 

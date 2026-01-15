@@ -1,37 +1,131 @@
 import { db } from "../db/connection";
 import Order from "../renderer/src/shared/types/order";
 
-export function createOrder(data: Order) {
-    const insert = db.prepare(`
-        INSERT INTO orders (
-            reference,
-            totalPrice,
-            totalPriceBV,
-            profitability,
-            status
-        ) VALUES (?, ?, ?, ?, ?);
-        `);
-    const result = insert.run(data.reference, data.totalPrice, data.totalPriceBV, data.profitability, data.status);
-    const orderId = result.lastInsertRowid
-    return orderId;
+interface OrderItemInput {
+    productId: number;
+    finalPrice: number;
+    amount: number;
+    cost: number;
+    customization: number;
+    log: number;
+    discount: number;
 }
 
-export function getAllOrders() {
+interface OrderPayload {
+    orderId?: number;
+    reference: string;
+    profitability: number;
+    status: string;
+    items: OrderItemInput[];
+}
+
+const calculateBV = (item: OrderItemInput) => {
+    const rentabilidade = 0.30;
+    const imposto = 0.13;
+    const over = 0.20;
+
+    return ((item.cost + item.customization + item.log) *
+        (1 + rentabilidade) *
+        (1 + imposto) *
+        (1 + over)) *
+        (1 - item.discount / 100);
+};
+
+const calculateProfitability = (item: OrderItemInput) => {
+    const imposto = 0.13;
+    const over = 0.20;
+
+    return ((item.finalPrice / ((item.cost + item.customization + item.log) * (1 + imposto) * (1 + over))) - 1);
+}
+
+const executeSaveTransaction = db.transaction((payload: OrderPayload) => {
+    const { orderId, reference, status, items } = payload;
+
+    let totalPrice = 0;
+    let totalPriceBV = 0;
+    let sumProfitability = 0;
+
+    const processedItems = items.map(item => {
+        const finalPriceBV = calculateBV(item);
+        const itemProfitability = calculateProfitability(item);
+
+        totalPrice += (item.amount * item.finalPrice);
+        totalPriceBV += (finalPriceBV * item.amount);
+        sumProfitability += itemProfitability;
+
+
+        return { ...item, finalPriceBV, sumProfitability }
+    })
+
+    let currentId = orderId;
+
+    if (currentId) {
+        db.prepare(`UPDATE orders SET reference = ?, totalPrice = ?, totalPriceBV = ?, profitability = ?, status = ? WHERE orderId = ?`)
+            .run(reference, totalPrice, totalPriceBV, sumProfitability, status, currentId);
+
+        db.prepare(`DELETE FROM order_items WHERE orderId = ?`).run(currentId);
+    } else {
+        const info = db.prepare(`INSERT INTO orders (reference, totalPrice, totalPriceBV, profitability, status) VALUES (?, ?, ?, ?, ?)`)
+            .run(reference, totalPrice, totalPriceBV, sumProfitability, status)
+        currentId = info.lastInsertRowid as number;
+    }
+
+    const insertItemStmt = db.prepare(`
+        INSERT INTO order_items (orderId, productId, amount, finalPrice, finalPriceBV, cost, customization, log, discount)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    for (const item of processedItems) {
+        insertItemStmt.run(
+            currentId,
+            item.productId,
+            item.amount,
+            item.finalPrice,
+            item.finalPriceBV,
+            item.cost,
+            item.customization,
+            item.log,
+            item.discount)
+    }
+
+    return { success: true, orderId: currentId };
+})
+
+export function saveCompleteOrder(payload: OrderPayload) {
+    return executeSaveTransaction(payload);
+}
+
+
+export const getOrdersPaged = (page: number = 1, limit: number = 50) => {
+    const offset = (page - 1) * limit;
+
     const orders = db.prepare(`
-        SELECT * FROM orders
-        `)
+        SELECT * FROM orders ORDER BY orderId DESC LIMIT ? OFFSET ?
+    `).all(limit, offset) as any[];
 
-    const result = orders.all()
-    return result;
-}
+    const total = db.prepare(`SELECT COUNT(*) as count FROM orders`).get() as { count: number };
 
-export function getOrder(data: Order) {
-    const order = db.prepare(`
-        SELECT reference, totalPrice, totalPriceBV, profitability, status FROM orders WHERE orderId = ?
-        `)
+    const orderIds = orders.map(o => o.orderId);
+    let itemsMap = {};
 
-    const result = order.run(data.orderId);
-    return result;
+    if (orderIds.length > 0) {
+        const placeholders = orderIds.map(() => "?").join(",");
+        const allItems = db.prepare(`SELECT * FROM order_items WHERE orderId IN (${placeholders})`)
+            .all(...orderIds) as any[]
+
+        itemsMap = allItems.reduce((acc, item) => {
+            if (!acc[item.orderId]) acc[item.orderId] = [];
+            acc[item.orderId].push(item)
+            return acc;
+        }, {})
+    }
+
+    return {
+        orders,
+        itemsMap,
+        totalPages: Math.ceil(total.count / limit),
+        currentPage: page
+    }
 }
 
 export function editOrder(data: Order) {

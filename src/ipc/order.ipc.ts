@@ -1,18 +1,26 @@
 import { ipcMain } from "electron";
-import { createOrder, editOrder, getAllOrders } from "../services/orders.service";
+import { saveCompleteOrder, editOrder, getOrdersPaged } from "../services/orders.service";
 
 export function registerOrderIpc() {
-    ipcMain.handle("order:create", async (_event, data) => {
-        const orderId = await createOrder(data);
-        return orderId;
-    });
+    ipcMain.handle("order:save", async (_event, payload) => {
+        try {
+            return saveCompleteOrder(payload)
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+            console.error("Erro ao salvar pedido:", errorMessage);
 
+            return { success: false, error: errorMessage }
+        }
+    });
 }
 
-export function getAllOrdersIpc() {
-    ipcMain.handle("orders:list", () => {
-        const orders = getAllOrders();
-        return orders;
+export function getOrderIpc() {
+    ipcMain.handle("order:list", (_event, data) => {
+        const page = data?.page || 1;
+        const limit = data.limit || 50
+
+        const result = getOrdersPaged(page, limit);
+        return result;
     })
 }
 

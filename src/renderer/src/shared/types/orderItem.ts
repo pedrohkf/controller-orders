@@ -9,6 +9,7 @@ type orderItem = {
     customization: number;
     log: number;
     discount: number;
+    productName: string;
 }
 
 export default orderItem;
