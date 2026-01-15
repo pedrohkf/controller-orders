@@ -7,11 +7,15 @@
     width: 100%;
     height: calc(100vh - 3rem);
     display: flex;
-    padding: 2rem;
     column-gap: 1.5rem;
+    padding: 1.5rem;
     background-color: aliceblue;
 }
 
-.tables{
+.displyNone{
+    display: none;
+}
+
+.tables {
     width: 70%;
 }

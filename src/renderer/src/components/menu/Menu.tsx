@@ -8,7 +8,7 @@ const Menu = ({setActiveForm}) => {
   return (
     <nav className={styles.menu}>
         <ul>
-            <li onClick={() => setActiveForm("orderPending")}>
+            <li onClick={() => setActiveForm("ordersPending")}>
                 <OrderPendingIcon />
             </li>
             <li onClick={() => setActiveForm("product")}>

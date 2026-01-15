@@ -5,15 +5,14 @@ import styles from "./PageController.module.css"
 import TableProduct from "../table/TableProduct";
 import Menu from "../menu/Menu";
 import OrderList from "../table/Order/OrderList";
+import PendingOrders from "../table/Order/Pending/PendingOrders";
 
-type ActiveForm = "orderPendidng" | "product" | "order";
+type ActiveForm = "ordersPending" | "product" | "order";
 
 const PageController = () => {
-  const [activeForm, setActiveForm] = useState<ActiveForm>("orderPendidng");
+  const [activeForm, setActiveForm] = useState<ActiveForm>("ordersPending");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedProductId, setSelectedProductId] = useState(null);
-
-  const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState<number>();
 
   return (
@@ -28,12 +27,14 @@ const PageController = () => {
           setSelectedOrderId={setSelectedOrderId}
           selectedOrderId={selectedOrderId}
         />
-        <div className={styles.tables}>
+
+        {activeForm == "ordersPending" && <PendingOrders onSelectId={setSelectedOrderId} />}
+        <div className={ activeForm == "ordersPending" ? styles.displayNone : styles.tables}>
           {activeForm == "order" && <OrderList onSelectId={setSelectedOrderId} />}
           {activeForm == "product" && <TableProduct onSelect={setSelectedProduct} onSelectId={setSelectedProductId} />}
         </div>
-            </div>
       </div>
+    </div>
   )
 }
 

@@ -12,11 +12,11 @@ type OrderContextType = {
     orderItems: Record<number, OrderItem[]>;
     pagination: PaginationInfo;
 
-    loadOrders: (page?: number) => Promise<void>;
+    loadOrders: (page?: number, status?: string) => Promise<void>;
 
     saveOrder: (
         payload: { orderId: number, reference: string, status: string, items: any[] }
-    ) => Promise<number>;
+    ) => Promise<any>;
 
 
     editOrder: (

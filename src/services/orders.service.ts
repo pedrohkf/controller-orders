@@ -96,14 +96,23 @@ export function saveCompleteOrder(payload: OrderPayload) {
 }
 
 
-export const getOrdersPaged = (page: number = 1, limit: number = 50) => {
+export const getOrdersPaged = (page: number = 1, limit: number = 50, status: string) => {
     const offset = (page - 1) * limit;
 
-    const orders = db.prepare(`
-        SELECT * FROM orders ORDER BY orderId DESC LIMIT ? OFFSET ?
-    `).all(limit, offset) as any[];
+    let query = `SELECT * FROM orders`;
+    let countQuery = `SELECT COUNT(*) as count FROM orders`;
+    const params: any[] = [];
 
-    const total = db.prepare(`SELECT COUNT(*) as count FROM orders`).get() as { count: number };
+    if (status) {
+        query += ` WHERE status = ?`;
+        countQuery += ` WHERE status = ?`;
+        params.push(status);
+    }
+
+    query += ` ORDER BY orderId DESC LIMIT ? OFFSET ?`;
+
+    const orders = db.prepare(query).all(...params, limit, offset) as any[];
+    const total = db.prepare(countQuery).get(...params) as { count: number };
 
     const orderIds = orders.map(o => o.orderId);
     let itemsMap = {};

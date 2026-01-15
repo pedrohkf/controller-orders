@@ -8,6 +8,10 @@
     border-radius: 10px;
 }
 
+.displayNone{
+    display: none;
+}
+
 .menuForm{
     display: flex;
     justify-content: space-around;

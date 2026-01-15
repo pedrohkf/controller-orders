@@ -9,17 +9,16 @@ const OrderProvider = ({ children }) => {
     const [orderItems, setOrderItems] = useState<Record<number, OrderItem[]>>({});
     const [pagination, setPagination] = useState({ totalPages: 1, currentPage: 1 });
 
-    const loadOrders = async (page: number = 1) => {
+    const loadOrders = async (page: number = 1, status?: string) => {
         try {
-            const response = await window.electron.ipcRenderer.invoke("order:list", {page})
+            const response = await window.electron.ipcRenderer.invoke("order:list", {
+                page,
+                status
+            })
 
             if (response) {
                 setOders(response.orders || []);
-                setOrderItems(prev => ({
-                    ...prev,
-                    ...response.itemsMap
-                }));
-
+                setOrderItems(prev => ({...prev, ...response.itemsMap}));
                 setPagination({
                     totalPages: response.totalPages,
                     currentPage: response.currentPage
