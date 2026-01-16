@@ -17,7 +17,7 @@ export function registerOrderIpc() {
 export function getOrderIpc() {
     ipcMain.handle("order:list", (_event, data) => {
         const page = data?.page || 1;
-        const limit = data.limit || 50;
+        const limit = data.limit || 14;
         const status = data?.status || ""
 
         const result = getOrdersPaged(page, limit, status);

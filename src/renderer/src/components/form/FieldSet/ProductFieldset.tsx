@@ -3,13 +3,13 @@ import styles from "./ProductFieldset.module.css"
 import useProductContext from "@renderer/hook/useProduct";
 
 import type { InputNumberProps } from "antd";
-import { InputNumber } from "antd";
+import { Card, InputNumber, Select } from "antd";
 
-const formatter: InputNumberProps<number>["formatter"] = (value) => {
+const formatter: InputNumberProps<number>['formatter'] = (value) => {
     const [start, end] = `${value}`.split('.') || [];
     const v = `${start}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return `R$ ${end ? `${v}.${end}` : `${v}`}`;
-}
+};
 
 
 const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
@@ -17,25 +17,27 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
 
     const products = listProducts?.products || [];
 
+    const handleProductChange = (value: number) => {
+        updateOrderItem(index, "productId", value)
+    };
 
     return (
-        <fieldset className={styles.productItem}>
-            <legend>Produto {index + 1}</legend>
-
+        <Card title={"Produto " + (index + 1)} extra={<button type="button" id={styles.trash} onClick={() => removeProduct(index)}><Trash /></button>} className={styles.productItem}>
             <div className={styles.rowProducts}>
                 <label>
                     Produto
-                    <select
-                        value={item.productId || ""}
-                        onChange={e => updateOrderItem(index, "productId", Number(e.target.value))}
-                    >
-                        <option value="">Selecione um produto</option>
-                        {products.map(prod => (
-                            <option key={prod.productId} value={prod.productId}>
-                                {prod.name}
-                            </option>
-                        ))}
-                    </select>
+                    <Select
+                        showSearch={{
+                            filterOption: (input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
+                        }}
+                        onChange={handleProductChange}
+                        placeholder="Selecione o produto"
+                        options={products.map(prod => ({
+                            value: prod.productId,
+                            label: prod.name
+                        }))}
+                    />
                 </label>
 
                 <label>
@@ -47,15 +49,13 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
                     Preço
                     <div>
                         <InputNumber<number>
-                            defaultValue={item.finalPrice}
+                            value={item.finalPrice}
                             formatter={formatter}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
+                            parser={(value) => value?.replace(/R\$\s?|(\.*)/g, '').replace(',', '.') as unknown as number}
                             onChange={(value) => updateOrderItem(index, "finalPrice", value)}
                         />
                     </div>
                 </label>
-
-                <button type="button" onClick={() => removeProduct(index)}><Trash /></button>
             </div>
 
             <div className={styles.rowDetails}>
@@ -63,9 +63,9 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
                     Custo
                     <div>
                         <InputNumber<number>
-                            defaultValue={item.cost}
+                            value={item.cost}
                             formatter={formatter}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
+                            parser={(value) => value?.replace(/R\$\s?|(\.*)/g, '').replace(',', '.') as unknown as number}
                             onChange={(value) => updateOrderItem(index, "cost", value)} />
                     </div>
                 </label>
@@ -73,10 +73,10 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
                 <label>Customização
                     <div>
                         <InputNumber<number>
-                            defaultValue={item.customization}
+                            value={item.customization}
                             formatter={formatter}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
-                            onChange={(value)=> updateOrderItem(index, "customization", value)} />
+                            parser={(value) => value?.replace(/R\$\s?|(\.*)/g, '').replace(',', '.') as unknown as number}
+                            onChange={(value) => updateOrderItem(index, "customization", value)} />
                     </div>
                 </label>
 
@@ -84,9 +84,9 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
                     Log
                     <div>
                         <InputNumber<number>
-                            defaultValue={item.log}
+                            value={item.log}
                             formatter={formatter}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
+                            parser={(value) => value?.replace(/R\$\s?|(\.*)/g, '').replace(',', '.') as unknown as number}
                             onChange={(value) => updateOrderItem(index, "log", value)} />
                     </div>
                 </label>
@@ -95,7 +95,7 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
                     Desconto
                     <div>
                         <InputNumber<number>
-                            defaultValue={item.log}
+                            value={item.discount}
                             formatter={(value) => `${value}%`}
                             parser={(value) => value?.replace('%', '') as unknown as number}
                             onChange={(value) => updateOrderItem(index, "discount", value)} />
@@ -103,7 +103,7 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
                     </div>
                 </label>
             </div>
-        </fieldset>
+        </Card>
     )
 
 };

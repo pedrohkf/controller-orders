@@ -121,19 +121,6 @@ const FormOrder = ({ selectedOrderId, setSelectedOrderId }) => {
 
       <label htmlFor="ref">Referência<input type="" placeholder="Referência" value={reference} onChange={(e) => setReference(e.target.value)} /></label>
 
-      <p className={styles.titleLine}>TOTAIS E RENTABILIDADE</p>
-
-      {/* <div className={styles.rowTotals}>
-        <label htmlFor="totalPrice"><input type="number" disabled value={totals.totalPrice.toFixed(2)} /></label>
-        <input type="number" disabled value={totals.totalPriceBV.toFixed(2)} />
-
-      </div>
-
-      <div className={styles.rowTotals}>
-        <input type="text" disabled value={totals.rentabilidadePorcent.toFixed(2) + " %"} />
-        <input type="number" disabled value={totals.rentabilidade.toFixed(2)} />
-      </div> */}
-
       <p className={styles.titleLine}>STATUS</p>
       <div className={styles.rowStatus} data-status={status}>
         <select name="" id="" value={status} onChange={(e) => setStatus(e.target.value)}>

@@ -103,7 +103,7 @@ export function saveCompleteOrder(payload: OrderPayload) {
     return executeSaveTransaction(payload);
 }
 
-export const getOrdersPaged = (page: number = 1, limit: number = 50, status: string) => {
+export const getOrdersPaged = (page: number = 1, limit: number = 14, status: string) => {
     const offset = (page - 1) * limit;
 
     let query = `SELECT * FROM orders`;
