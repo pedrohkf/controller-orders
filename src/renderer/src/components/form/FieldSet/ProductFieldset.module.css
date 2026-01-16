@@ -1,10 +1,42 @@
-.productItem{
+.productItem {
     padding: 0.8rem;
     background-color: var(--background-light);
     border-radius: 8px;
 }
 
-.productItem button{
+.productItem input, select {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding-left: 8px;
+}
+
+.currencyWrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding-left: 8px;
+}
+
+.currencyWrapper:hover {
+    border: 1px solid var(--text-medium);
+}
+
+.currencyWrapper input {
+    border: none;
+    padding: 8px;
+    outline: none;
+}
+
+.currencySymbol {
+    color: var(--text-medium);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.productItem button {
     display: flex;
     align-items: center;
     justify-content: center;

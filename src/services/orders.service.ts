@@ -38,35 +38,43 @@ const calculateProfitability = (item: OrderItemInput) => {
     return ((item.finalPrice / ((item.cost + item.customization + item.log) * (1 + imposto) * (1 + over))) - 1);
 }
 
+const calculateCostOrder = (item: OrderItemInput) => {
+    return (item.cost + item.customization + item.log) * item.amount;
+}
+
 const executeSaveTransaction = db.transaction((payload: OrderPayload) => {
     const { orderId, reference, status, items } = payload;
 
     let totalPrice = 0;
     let totalPriceBV = 0;
     let sumProfitability = 0;
+    let totalCostOrder = 0;
 
     const processedItems = items.map(item => {
         const finalPriceBV = calculateBV(item);
         const itemProfitability = calculateProfitability(item);
+        const costOrder = calculateCostOrder(item);
 
         totalPrice += (item.amount * item.finalPrice);
         totalPriceBV += (finalPriceBV * item.amount);
         sumProfitability += itemProfitability;
-
+        totalCostOrder += costOrder;
 
         return { ...item, finalPriceBV, sumProfitability }
     })
 
+    const orderProfitability = items.length > 0 ? (sumProfitability / items.length) : 0;
+
     let currentId = orderId;
 
     if (currentId) {
-        db.prepare(`UPDATE orders SET reference = ?, totalPrice = ?, totalPriceBV = ?, profitability = ?, status = ? WHERE orderId = ?`)
-            .run(reference, totalPrice, totalPriceBV, sumProfitability, status, currentId);
+        db.prepare(`UPDATE orders SET reference = ?, totalPrice = ?, totalPriceBV = ?, profitability = ?, costOrder = ?, status = ? WHERE orderId = ?`)
+            .run(reference, totalPrice, totalPriceBV, orderProfitability, totalCostOrder, status, currentId);
 
         db.prepare(`DELETE FROM order_items WHERE orderId = ?`).run(currentId);
     } else {
-        const info = db.prepare(`INSERT INTO orders (reference, totalPrice, totalPriceBV, profitability, status) VALUES (?, ?, ?, ?, ?)`)
-            .run(reference, totalPrice, totalPriceBV, sumProfitability, status)
+        const info = db.prepare(`INSERT INTO orders (reference, totalPrice, totalPriceBV, profitability, costOrder, status) VALUES (?, ?, ?, ?, ?, ?)`)
+            .run(reference, totalPrice, totalPriceBV, orderProfitability, totalCostOrder, status)
         currentId = info.lastInsertRowid as number;
     }
 
@@ -94,7 +102,6 @@ const executeSaveTransaction = db.transaction((payload: OrderPayload) => {
 export function saveCompleteOrder(payload: OrderPayload) {
     return executeSaveTransaction(payload);
 }
-
 
 export const getOrdersPaged = (page: number = 1, limit: number = 50, status: string) => {
     const offset = (page - 1) * limit;

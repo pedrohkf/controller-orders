@@ -7,10 +7,10 @@ import Menu from "../menu/Menu";
 import OrderList from "../table/Order/OrderList";
 import PendingOrders from "../table/Order/Pending/PendingOrders";
 
-type ActiveForm = "ordersPending" | "product" | "order";
+import { ActiveForm } from "@renderer/shared/enums/Globals";
 
 const PageController = () => {
-  const [activeForm, setActiveForm] = useState<ActiveForm>("ordersPending");
+  const [activeForm, setActiveForm] = useState<ActiveForm>(ActiveForm.PENDING);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState<number>();
@@ -28,10 +28,10 @@ const PageController = () => {
           selectedOrderId={selectedOrderId}
         />
 
-        {activeForm == "ordersPending" && <PendingOrders onSelectId={setSelectedOrderId} />}
-        <div className={ activeForm == "ordersPending" ? styles.displayNone : styles.tables}>
-          {activeForm == "order" && <OrderList onSelectId={setSelectedOrderId} />}
-          {activeForm == "product" && <TableProduct onSelect={setSelectedProduct} onSelectId={setSelectedProductId} />}
+        {activeForm == ActiveForm.PENDING && <PendingOrders onSelectId={setSelectedOrderId} />}
+        <div className={ activeForm == ActiveForm.PENDING ? styles.displayNone : styles.tables}>
+          {activeForm == ActiveForm.ORDER && <OrderList onSelectId={setSelectedOrderId} />}
+          {activeForm == ActiveForm.PRODUCT && <TableProduct onSelect={setSelectedProduct} onSelectId={setSelectedProductId} />}
         </div>
       </div>
     </div>

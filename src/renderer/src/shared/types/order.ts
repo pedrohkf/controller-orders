@@ -4,6 +4,10 @@ type Order = {
     totalPrice?: number | null;
     totalPriceBV?: number | null;
     profitability?: number | null;
+    description?: {
+        name: string;
+    };
+    onClick: (item: number) => void;
     status: "pendente" | "finalizado" | "enviado";
 };
 

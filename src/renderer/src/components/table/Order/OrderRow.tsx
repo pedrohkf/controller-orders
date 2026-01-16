@@ -15,9 +15,9 @@ const OrderRow = ({ order, handleSelect }) => {
         <td>{order.reference}</td>
         <td>{order.totalPrice.toFixed(2)}</td>
         <td>{(order.profitability * 100).toFixed(2)}%</td>
-        <td>{order.status}</td>
+        <td data-status={order.status} className={styles.statusCell}>{order.status}</td>
         <td><button onClick={(e) => {
-          e.stopPropagation(); 
+          e.stopPropagation();
           handleSelect(order);
         }}>
           Editar

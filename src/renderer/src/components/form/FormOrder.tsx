@@ -22,16 +22,16 @@ const FormOrder = ({ selectedOrderId, setSelectedOrderId }) => {
   const [items, setItems] = useState([createEmptyItem()]);
 
   useEffect(() => {
-    if(selectedOrderId) {
+    if (selectedOrderId) {
       const orderToEdit = orders.find(o => o.orderId === selectedOrderId);
       const savedItems = orderItems[selectedOrderId];
 
-      if(orderToEdit){
+      if (orderToEdit) {
         setReference(orderToEdit.reference);
         setStatus(orderToEdit.status);
       }
 
-      if(savedItems && savedItems.length > 0){
+      if (savedItems && savedItems.length > 0) {
         setItems(savedItems)
       } else {
         resetForm();
@@ -122,7 +122,7 @@ const FormOrder = ({ selectedOrderId, setSelectedOrderId }) => {
       <label htmlFor="ref">Referência<input type="" placeholder="Referência" value={reference} onChange={(e) => setReference(e.target.value)} /></label>
 
       <p className={styles.titleLine}>TOTAIS E RENTABILIDADE</p>
-      
+
       {/* <div className={styles.rowTotals}>
         <label htmlFor="totalPrice"><input type="number" disabled value={totals.totalPrice.toFixed(2)} /></label>
         <input type="number" disabled value={totals.totalPriceBV.toFixed(2)} />
@@ -135,7 +135,7 @@ const FormOrder = ({ selectedOrderId, setSelectedOrderId }) => {
       </div> */}
 
       <p className={styles.titleLine}>STATUS</p>
-      <div className={styles.rowStatus}>
+      <div className={styles.rowStatus} data-status={status}>
         <select name="" id="" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="" >Selecione um status</option>
           <option value="pendente" >pendente</option>

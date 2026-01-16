@@ -2,6 +2,15 @@ import Trash from "@renderer/assets/icons/Trash";
 import styles from "./ProductFieldset.module.css"
 import useProductContext from "@renderer/hook/useProduct";
 
+import type { InputNumberProps } from "antd";
+import { InputNumber } from "antd";
+
+const formatter: InputNumberProps<number>["formatter"] = (value) => {
+    const [start, end] = `${value}`.split('.') || [];
+    const v = `${start}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return `R$ ${end ? `${v}.${end}` : `${v}`}`;
+}
+
 
 const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
     const listProducts = useProductContext();
@@ -36,17 +45,63 @@ const ProductFieldset = ({ item, index, updateOrderItem, removeProduct }) => {
 
                 <label>
                     Preço
-                    <input type="number" value={item.finalPrice} onChange={e => updateOrderItem(index, "finalPrice", Number(e.target.value))} />
+                    <div>
+                        <InputNumber<number>
+                            defaultValue={item.finalPrice}
+                            formatter={formatter}
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
+                            onChange={(value) => updateOrderItem(index, "finalPrice", value)}
+                        />
+                    </div>
                 </label>
 
                 <button type="button" onClick={() => removeProduct(index)}><Trash /></button>
             </div>
 
             <div className={styles.rowDetails}>
-                <label>Custo<input type="number" value={item.cost} onChange={e => updateOrderItem(index, "cost", Number(e.target.value))} /></label>
-                <label>Customização<input type="number" value={item.customization} onChange={e => updateOrderItem(index, "customization", Number(e.target.value))} /></label>
-                <label>Log<input type="number" value={item.log} onChange={e => updateOrderItem(index, "log", Number(e.target.value))} /></label>
-                <label>Desconto<input type="number" value={item.discount} onChange={e => updateOrderItem(index, "discount", Number(e.target.value))} /></label>
+                <label>
+                    Custo
+                    <div>
+                        <InputNumber<number>
+                            defaultValue={item.cost}
+                            formatter={formatter}
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
+                            onChange={(value) => updateOrderItem(index, "cost", value)} />
+                    </div>
+                </label>
+
+                <label>Customização
+                    <div>
+                        <InputNumber<number>
+                            defaultValue={item.customization}
+                            formatter={formatter}
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
+                            onChange={(value)=> updateOrderItem(index, "customization", value)} />
+                    </div>
+                </label>
+
+                <label>
+                    Log
+                    <div>
+                        <InputNumber<number>
+                            defaultValue={item.log}
+                            formatter={formatter}
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
+                            onChange={(value) => updateOrderItem(index, "log", value)} />
+                    </div>
+                </label>
+
+                <label>
+                    Desconto
+                    <div>
+                        <InputNumber<number>
+                            defaultValue={item.log}
+                            formatter={(value) => `${value}%`}
+                            parser={(value) => value?.replace('%', '') as unknown as number}
+                            onChange={(value) => updateOrderItem(index, "discount", value)} />
+
+                    </div>
+                </label>
             </div>
         </fieldset>
     )
